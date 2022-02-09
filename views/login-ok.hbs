@@ -1,0 +1,105 @@
+
+
+<div class="container mt-1">
+<div class="container text-center my-1">
+    <div class="jumbotron" style="background-color: rgb(7, 156, 7);color: white;">
+        <h1>Has iniciado sesion correctamente</h1>
+        <h2><i>Bienvenido {{usuario}}</i></h2>
+        <button class="btn btn-danger my-1" onclick="logout()">Cerrar Sesion</button>
+    </div>
+</div>
+
+    <div id="newProduct">
+      <form onsubmit="return addProduct()" class="row- g-1">
+        <label for="producto" class="label-form">Producto</label>
+        <input type="text" name="producto" id="producto" class="form-control" />
+        <label for="price" class="label-form">Price</label>
+        <input type="text" name="price" id="price" class="form-control" />
+        <label for="thumbnail" class="label-form">Foto</label>
+        <input
+          type="text"
+          name="thumbnail"
+          id="thumbnail"
+          class="form-control"
+        />
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+      </form>
+    </div>
+    <div id="products">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Foto</th>
+          </tr>
+        </thead>
+        <tbody class="tableBody" id="tableProds"></tbody>
+      </table>
+    </div>
+    <div id="chat">
+      <form onsubmit="return addMessage()" class="row g-1">
+        <input
+          type="text"
+          placeholder="eMail..."
+          name="email"
+          id="email"
+          class="form-control"
+        />
+        <input
+          type="text"
+          placeholder="Nombre..."
+          name="nombre"
+          id="nombre"
+          class="form-control"
+        />
+        <input
+          type="text"
+          placeholder="Apellido..."
+          name="apellido"
+          id="apellido"
+          class="form-control"
+        />
+        <input
+          type="number"
+          placeholder="Edad..."
+          name="edad"
+          id="edad"
+          class="form-control"
+        />
+        <input
+          type="text"
+          placeholder="Alias..."
+          name="alias"
+          id="alias"
+          class="form-control"
+        />
+        <input
+          type="text"
+          placeholder="Avatar..."
+          name="avatar"
+          id="avatar"
+          class="form-control"
+        />
+        <input
+          type="text"
+          placeholder="Mensaje..."
+          name="mensaje"
+          id="mensaje"
+          class="form-control"
+        />
+        <input type="submit" value="Enviar" class="btn btn-primary" />
+      </form>
+    </div>
+    <div id="mensajes"></div>
+
+<script>
+    function redireccionar(pagina) {
+        location.href = pagina;
+    } 
+
+    function logout() {
+        console.log('logout');
+        redireccionar('/logout')
+    }
+</script>
