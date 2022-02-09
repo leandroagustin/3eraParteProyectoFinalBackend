@@ -320,7 +320,7 @@ if (cluster.isMaster) {
     res.status(404).render("routing-error", {});
   });
 
-  server.listen(arguments.port, () => {
-    console.log(`Server running on port ${arguments.port}`);
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
   });
 }
