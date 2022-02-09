@@ -45,7 +45,9 @@
 const mongoose = require("mongoose");
 const { Schema, model } = require("mongoose");
 
-mongoose.connect("mongodb://127.0.0.1:27017/ecommerce");
+mongoose.connect(
+  "mongodb+srv://Leandro:123@clusterdemo.eullt.mongodb.net/test"
+);
 
 mongoose.connection.on("open", () => {
   console.log("Base de datos conectada con exito");

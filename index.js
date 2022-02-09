@@ -45,7 +45,8 @@ if (cluster.isMaster) {
   app.use(
     session({
       store: MongoStore.create({
-        mongoUrl: "mongodb://127.0.0.1:27017/ecommerce",
+        mongoUrl:
+          "mongodb+srv://Leandro:123@clusterdemo.eullt.mongodb.net/test",
       }),
       // store: MongoStore.create({ mongoUrl: config.mongoRemote.cnxStr }),
       secret: "shhh!",
