@@ -58,9 +58,9 @@ if (cluster.isMaster) {
     })
   );
 
-  function print(objeto) {
-    console.log(util.inspect(objeto, false, 12, true));
-  }
+  // function print(objeto) {
+  //   console.log(util.inspect(objeto, false, 12, true));
+  // }
 
   //Normalizr
   const authorSchema = new schema.Entity("author", {}, { idAttribute: "id" });
@@ -320,7 +320,7 @@ if (cluster.isMaster) {
     res.status(404).render("routing-error", {});
   });
 
-  server.listen(arguments.port, () => {
-    console.log(`Server running on port ${arguments.port}`);
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
   });
 }
