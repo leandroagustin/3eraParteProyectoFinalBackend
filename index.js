@@ -12,7 +12,7 @@ const bCrypt = require("bcrypt");
 
 const productsRoutes = require("./routes/products");
 const usersRoutes = require("./routes/users");
-// const authWebRouter = require("./routes/auth");
+const authWebRouter = require("./routes/auth");
 const path = require("path");
 
 const passport = require("passport");
