@@ -22,10 +22,10 @@
 //       table.integer("stock");
 //   })
 //   .then(() => {
-//     console.log("Tabla creada con exito");
+//     // console.log("Tabla creada con exito");
 //   })
 //   .catch((err) => {
-//     console.log(err);
+//     // console.log(err);
 //   });
 
 // knex.schema
@@ -36,10 +36,10 @@
 //       table.string("mensaje");
 //   })
 //   .then(() => {
-//     console.log("Tabla creada con exito");
+//     // console.log("Tabla creada con exito");
 //   })
 //   .catch((err) => {
-//     console.log(err);
+//     // console.log(err);
 //   });
 
 const mongoose = require("mongoose");
@@ -81,4 +81,4 @@ const usersSchema = new Schema({
 
 const User = model("user", usersSchema);
 
-module.exports = { knex, mensajes, User };
+module.exports = { mensajes, User };

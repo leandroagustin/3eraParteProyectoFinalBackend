@@ -4,20 +4,20 @@ const http = require("http");
 const Mensajes = require("./ContenedorMensajes");
 const msj = new Mensajes();
 const { normalize, denormalize, schema } = require("normalizr");
-const util = require("util");
-const { knex, User } = require("./db");
+// const util = require("util");
+const { User } = require("./db");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const bCrypt = require("bcrypt");
 
 const productsRoutes = require("./routes/products");
 const usersRoutes = require("./routes/users");
-const authWebRouter = require("./routes/auth");
-const path = require("path");
+// const authWebRouter = require("./routes/auth");
+// const path = require("path");
 
 const passport = require("passport");
 
-const parseArg = require("minimist");
+// const parseArg = require("minimist");
 
 const dotenv = require("dotenv");
 const random = require("./routes/randoms");
@@ -108,19 +108,19 @@ if (cluster.isMaster) {
       io.sockets.emit("message_msn", normalizeMessage);
     });
     //productos
-    const getAll = async () => {
-      let data = [];
-      await knex
-        .select("title", "price", "thumbnail")
-        .from("products")
-        .then((res) => {
-          data = res;
-        });
-      return data;
-    };
-    const save = async (prod) => {
-      await knex("products").insert(prod);
-    };
+    // const getAll = async () => {
+    //   let data = [];
+    //   await knex
+    //     .select("title", "price", "thumbnail")
+    //     .from("products")
+    //     .then((res) => {
+    //       data = res;
+    //     });
+    //   return data;
+    // };
+    // const save = async (prod) => {
+    //   await knex("products").insert(prod);
+    // };
 
     socket.emit("message_pr", await getAll());
 
@@ -154,12 +154,12 @@ if (cluster.isMaster) {
 
   dotenv.config();
 
-  const options = {
-    default: { port: 8080 },
-    alias: { p: "port" },
-  };
+  // const options = {
+  //   default: { port: 8080 },
+  //   alias: { p: "port" },
+  // };
 
-  let arguments = parseArg(process.argv.slice(2), options);
+  // let arguments = parseArg(process.argv.slice(2), options);
 
   app.use("/api/randoms", random);
 
