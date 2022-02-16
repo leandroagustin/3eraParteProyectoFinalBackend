@@ -41,7 +41,6 @@ socket.on("message_msn", (data) => {
     .join(" ");
 
   document.querySelector("#mensajes").innerHTML = html;
-
 });
 
 socket.on("message_pr", (dataObj) => {

@@ -12,6 +12,10 @@ const bCrypt = require("bcrypt");
 
 const productsRoutes = require("./routes/products");
 const usersRoutes = require("./routes/users");
+//
+const carritosRouter = require("./routes/carrito");
+const productosRouter = require("./routes/productos");
+
 // const authWebRouter = require("./routes/auth");
 // const path = require("path");
 
@@ -40,6 +44,9 @@ if (cluster.isMaster) {
 
   app.use("/products", productsRoutes);
   app.use("/users", usersRoutes);
+  //
+  app.use("/carritos", carritosRouter);
+  app.use("/productos", productosRouter);
   // app.use(authWebRouter);
 
   app.use(
@@ -108,20 +115,6 @@ if (cluster.isMaster) {
 
       io.sockets.emit("message_msn", normalizeMessage);
     });
-    //productos
-    // const getAll = async () => {
-    //   let data = [];
-    //   await knex
-    //     .select("title", "price", "thumbnail")
-    //     .from("products")
-    //     .then((res) => {
-    //       data = res;
-    //     });
-    //   return data;
-    // };
-    // const save = async (prod) => {
-    //   await knex("products").insert(prod);
-    // };
 
     socket.emit("message_pr", await getAll());
 
