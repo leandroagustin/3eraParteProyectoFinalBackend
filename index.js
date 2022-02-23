@@ -175,16 +175,38 @@ if (cluster.isMaster) {
   app.use("/api/randoms", random);
 
   app.get("/info", (req, res) => {
-    let data = {
-      "argumentos de entrada": process.argv.slice(2),
-      "sistema opertativo": process.platform,
-      "version de node": process.version,
-      rss: process.memoryUsage().rss,
-      path: process.execPath,
+    res.render(path.join(process.cwd()), "./api/info", {
+      argumentos: parseArg(process.argv.slice(2)),
+      plataforma: process.platform,
+      version: process.version,
+      memoria: process.memoryUsage().rss,
+      pathEjecucion: process.execPath,
       processId: process.pid,
-      "carpeta proyecto": process.cwd(),
-    };
-    res.json({ data });
+      carpeta: process.cwd(),
+    });
+    console.log(
+      `argumentos: ${parseArg(process.argv.slice(2))} \n plataforma: ${
+        process.platform
+      } \n version: ${process.version} \n memoria: ${
+        process.memoryUsage().rss
+      } \n pathEjecucion: ${process.execPath} \n processId: ${
+        process.pid
+      } \n carpeta: ${process.cwd()}`
+    );
+    loggerInfo.info(`URL: ${req.url} Metodo: ${req.method}`);
+  });
+
+  app.get("/info2", (req, res) => {
+    res.render(path.join(process.cwd()), "./api/info2", {
+      argumentos: parseArg(process.argv.slice(2)),
+      plataforma: process.platform,
+      version: process.version,
+      memoria: process.memoryUsage().rss,
+      pathEjecucion: process.execPath,
+      processId: process.pid,
+      carpeta: process.cwd(),
+    });
+    loggerInfo.info(`URL: ${req.url} Metodo: ${req.method}`);
   });
 
   passport.use(

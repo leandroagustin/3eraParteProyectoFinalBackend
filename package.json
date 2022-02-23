@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "benchmark": "node src/benchmark.js"
+
   },
   "keywords": [],
   "author": "",
