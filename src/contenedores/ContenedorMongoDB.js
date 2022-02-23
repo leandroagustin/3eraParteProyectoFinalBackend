@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// const { config } = require("../config");
 const { asPOJO, renameField, removeField } = require("../utils/objectUtils");
 
 mongoose.connect(
