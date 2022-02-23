@@ -1,6 +1,23 @@
 const express = require("express");
 const port = process.env.PORT || 8080;
 const http = require("http");
+//Multer
+// const multer = require("multer");
+// const update = multer({ dest: "public/images" })
+const multer = require("multer");
+const path = require("path");
+
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, `/public/images`));
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+let update = multer({ storage });
+
 const Mensajes = require("./ContenedorMensajes");
 const msj = new Mensajes();
 const { normalize, denormalize, schema } = require("normalizr");
@@ -10,8 +27,8 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const bCrypt = require("bcrypt");
 
-const productsRoutes = require("./routes/products");
-const usersRoutes = require("./routes/users");
+const productsRoutes = require("./routes/products"); //con knex no funca
+const usersRoutes = require("./routes/users"); //con knex no funca
 //
 const carritosRouter = require("./routes/carrito");
 const productosRouter = require("./routes/productos");
@@ -26,6 +43,13 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const random = require("./routes/randoms");
 
+//Loggers
+const { infoLogger, warningLogger } = require("./src/loggers/loggers");
+
+const client = require("./src/whatsapp/whatsapp");
+const transporter = require("./src/mailer/mailer");
+const TEST_MAIL = "francisca.moen70@ethereal.email";
+
 const cluster = require("cluster");
 const numCPUS = require("os").cpus().length; //cpus() me devuelve un array con la contidad de nucleos [1,2,3,4,5,6,7]
 
@@ -35,7 +59,7 @@ if (cluster.isMaster) {
     cluster.fork(); //creo un proceso para cada nucleo
   }
   cluster.on("exit", () => {
-    console.log(`Process ${process.pid} died`);
+    infoLogger.info(`Process ${process.pid} died`);
   });
 } else {
   const app = express();
@@ -148,13 +172,6 @@ if (cluster.isMaster) {
 
   dotenv.config();
 
-  // const options = {
-  //   default: { port: 8080 },
-  //   alias: { p: "port" },
-  // };
-
-  // let arguments = parseArg(process.argv.slice(2), options);
-
   app.use("/api/randoms", random);
 
   app.get("/info", (req, res) => {
@@ -179,7 +196,7 @@ if (cluster.isMaster) {
       (req, username, password, done) => {
         User.findOne({ username: username }, function (err, user) {
           if (err) {
-            console.log("Error in SignUp: " + err);
+            warningLogger.error("Error in SignUp: " + err);
             return done(err);
           }
 
@@ -188,20 +205,42 @@ if (cluster.isMaster) {
             return done(null, false);
           }
 
+          const foto = `${req.file.destination}/${req.file.filename}`;
+
           const newUser = {
             username: username,
             password: createHash(password),
+            foto: foto,
           };
 
-          User.create(newUser, (err, userWithId) => {
+          User.create(newUser, async (err, userWithId) => {
             if (err) {
-              console.log("Error in Saving user: " + err);
+              warningLogger.error("Error in Saving user: " + err);
               return done(err);
             }
             console.log(user);
             console.log("User Registration succesful");
             return done(null, userWithId);
           });
+
+          let info = transporter.sendMail({
+            from: "Servidor node.js",
+            to: TEST_MAIL,
+            subject: "Nuevo registro",
+            html: `<h1> Nuevo usuario registrado </h1> \n 
+              <span>Nombre: ${username} </span>\n
+              <span>Foto: ${foto}</span>`,
+          });
+          infoLogger.info(info);
+
+          let whatsapp = client.messages.create({
+            body: `<h1> Nuevo usuario registrado </h1> \n 
+              <span>Nombre: ${username} </span>\n
+              <span>Foto: ${foto}</span>`,
+            from: "whatsapp:+18606891892",
+            to: "whatsapp:+542804568365",
+          });
+          infoLogger.info(whatsapp);
         });
       }
     )
@@ -210,7 +249,7 @@ if (cluster.isMaster) {
   passport.use(
     "login",
     new LocalStrategy((username, password, done) => {
-      User.findOne({ username }, (err, user) => {
+      User.findOne({ username: username }, (err, user) => {
         if (err) return done(err);
 
         if (!user) {
@@ -246,6 +285,7 @@ if (cluster.isMaster) {
         nombre: user.firstName,
         apellido: user.lastName,
         email: user.email,
+        foto: user.foto,
       });
     } else {
       console.log("user NO logueado");
@@ -256,15 +296,15 @@ if (cluster.isMaster) {
     "/login",
     passport.authenticate("login", { failureRedirect: "/faillogin" }),
     (req, res) => {
-      var user = req.user;
-      //console.log(user);
+      let user = req.user;
+      infoLogger.info(user);
 
       //grabo en user fecha y hora logueo
       res.sendFile(__dirname + "/views/index.html");
     }
   );
   app.get("/faillogin", (req, res) => {
-    console.log("error en login");
+    warningLogger.error("error en login");
     res.render("login-error", {});
   });
 
@@ -275,17 +315,21 @@ if (cluster.isMaster) {
 
   app.post(
     "/signup",
-    passport.authenticate("signup", { failureRedirect: "/failsignup" }),
+    update.single("foto"),
+    passport.authenticate("signup", {
+      failureRedirect: "/failsignup",
+    }),
     (req, res) => {
-      var user = req.user;
-      //console.log(user);
+      res.send("Check Image");
+      let user = req.user;
+      console.log(user);
 
       //grabo en user fecha y hora logueo
       res.sendFile(__dirname + "/views/index.html");
     }
   );
   app.get("/failsignup", (req, res) => {
-    console.log("error en signup");
+    warningLogger.error("error en signup");
     res.render("signup-error", {});
   });
 
@@ -299,7 +343,7 @@ if (cluster.isMaster) {
 
   app.get("/ruta-protegida", checkAuthentication, (req, res) => {
     const { user } = req;
-    console.log(user);
+    warningLogger.error(user);
     res.send("<h1>Ruta OK!</h1>");
   });
 

@@ -1,5 +1,13 @@
 const socket = io();
 
+const transporter = require("../src/mailer/mailer");
+//twilio
+const client = require("../src/whatsapp/whatsapp");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const TEST_MAIL = "francisca.moen70@ethereal.email";
+
 //Normalize
 const authorSchema = new normalizr.schema.Entity(
   "author",
@@ -96,6 +104,7 @@ const updateTable = (data) => {
 };
 
 // Products Server
+
 const addPr = () => {
   let dataObj = {
     title: document.querySelector("#title").value,
@@ -106,6 +115,42 @@ const addPr = () => {
   document.querySelector("#title").value = "";
   document.querySelector("#price").value = "";
   document.querySelector("#thumbnail").value = "";
+
+  try {
+    let info = transporter.sendMail({
+      from: "Servidor node.js",
+      to: TEST_MAIL,
+      subject: "Una nueva compra",
+      html: `<h1> Pedido </h1>  ${dataObj.map((pr) => {
+        `
+        Articulo: ${pr.title} \n
+        Precio: ${pr.price} \n
+        Codigo: ${pr.thumbnail} \n
+        `;
+      })}`,
+    });
+
+    let whatsapp = client.messages.create({
+      body: `<h1> Pedido </h1>  ${dataObj.map((pr) => {
+        `
+        Articulo: ${pr.title} \n
+        Precio: ${pr.price} \n
+        Codigo: ${pr.thumbnail} \n
+        `;
+      })}`,
+      from: "whatsapp:+18606891892", //de twilio
+      to: "whatsapp:+5492804568365", //+549..
+    });
+    // //console.log(products.product.length);
+    // for (let i = 0; i < products.product.length; i++) {
+    //   let res = cart.deleteProduct(
+    //     req.params.id,
+    //     JSON.stringify(products.product[i]._id)
+    //   );
+    // }
+  } catch (err) {
+    warningLogger.error(err);
+  }
 
   return false;
 };
